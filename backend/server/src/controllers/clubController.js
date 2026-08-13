@@ -1,6 +1,8 @@
 const clubService = require('../services/clubService');
+const notificationService = require('../services/notificationService');
 const { sendSuccess } = require('../utils/response');
 const { catchAsync } = require('../middlewares/errorHandler');
+const { emitNotificationToUser } = require('../sockets/socketHandlers');
 
 const createClub = catchAsync(async function handleCreateClub(req, res) {
   const club = await clubService.createClub(req.currentUser.id, req.body);
@@ -29,6 +31,15 @@ const joinClub = catchAsync(async function handleJoinClub(req, res) {
 
 const updateMemberStatus = catchAsync(async function handleUpdateMemberStatus(req, res) {
   const membership = await clubService.updateMembershipStatus(req.params.id, req.params.userId, req.body.status);
+
+  const notification = await notificationService.createNotification(req.params.userId, {
+    type: 'club_membership',
+    title: req.body.status === 'approved' ? 'Club request approved' : 'Club request update',
+    message: `Your club membership request was ${req.body.status}`,
+    link: `/app/student/clubs`,
+  });
+  emitNotificationToUser(req.app.get('io'), req.params.userId, notification);
+
   return sendSuccess(res, 200, 'Membership updated', { membership });
 });
 

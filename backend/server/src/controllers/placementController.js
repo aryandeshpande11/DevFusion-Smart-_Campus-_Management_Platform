@@ -1,6 +1,8 @@
 const placementService = require('../services/placementService');
+const notificationService = require('../services/notificationService');
 const { sendSuccess } = require('../utils/response');
 const { catchAsync } = require('../middlewares/errorHandler');
+const { emitNotificationToUser } = require('../sockets/socketHandlers');
 
 const createPlacement = catchAsync(async function handleCreatePlacement(req, res) {
   const placement = await placementService.createPlacement(req.currentUser.id, req.body);
@@ -39,6 +41,15 @@ const getApplications = catchAsync(async function handleGetApplications(req, res
 
 const updateApplicationStatus = catchAsync(async function handleUpdateApplicationStatus(req, res) {
   const application = await placementService.updateApplicationStatus(req.params.id, req.body.status);
+
+  const notification = await notificationService.createNotification(application.studentId, {
+    type: 'placement_status',
+    title: 'Application status updated',
+    message: `Your placement application status is now: ${req.body.status}`,
+    link: `/app/student/placements`,
+  });
+  emitNotificationToUser(req.app.get('io'), application.studentId, notification);
+
   return sendSuccess(res, 200, 'Application status updated', { application });
 });
 

@@ -5,6 +5,20 @@ async function createNotice(creatorId, { title, content, targetRole, targetDepar
   return db.notice.create({ data: { title, content, targetRole, targetDepartment, createdBy: creatorId } });
 }
 
+// finds every user who should receive an in-app notification for a newly posted notice
+// (mirrors the same targeting rules used to filter the notice feed itself)
+async function getUsersMatchingNoticeTarget({ targetRole, targetDepartment }) {
+  return db.user.findMany({
+    where: {
+      AND: [
+        targetRole ? { role: { name: targetRole } } : {},
+        targetDepartment ? { departmentId: targetDepartment } : {},
+      ],
+    },
+    select: { id: true },
+  });
+}
+
 // only shows notices meant for this user's role/department, or ones with no targeting (everyone)
 async function getNoticesForUser(user) {
   return db.notice.findMany({
@@ -23,4 +37,4 @@ async function deleteNotice(noticeId) {
   await db.notice.delete({ where: { id: noticeId } });
 }
 
-module.exports = { createNotice, getNoticesForUser, deleteNotice };
+module.exports = { createNotice, getNoticesForUser, deleteNotice, getUsersMatchingNoticeTarget };

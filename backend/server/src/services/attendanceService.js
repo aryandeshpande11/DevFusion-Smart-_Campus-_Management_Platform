@@ -76,7 +76,7 @@ async function getStudentAttendanceSummary(studentId) {
     if (record.status === 'present' || record.status === 'late') subjectMap[courseName].present += 1;
   }
 
-  const subjectWise = Object.entries(subjectMap).map(([courseName, counts]) => ({
+  const subjects = Object.entries(subjectMap).map(([courseName, counts]) => ({
     courseName,
     percentage: Math.round((counts.present / counts.total) * 100),
   }));
@@ -85,7 +85,7 @@ async function getStudentAttendanceSummary(studentId) {
   const totalPresent = records.filter((r) => r.status === 'present' || r.status === 'late').length;
   const overallPercentage = totalClasses ? Math.round((totalPresent / totalClasses) * 100) : 0;
 
-  return { overallPercentage, subjectWise };
+  return { overallPercentage, subjects };
 }
 
 async function getCourseAttendanceReport(courseId) {
@@ -96,6 +96,50 @@ async function getCourseAttendanceReport(courseId) {
   return sessions;
 }
 
+// admin-facing rollup: campus-wide attendance % for the current calendar month, broken down by department
+async function getMonthlyAttendanceReport() {
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+  const sessions = await db.attendanceSession.findMany({
+    where: { date: { gte: monthStart, lte: monthEnd } },
+    include: { records: true, course: { include: { department: true } } },
+  });
+
+  const deptMap = {};
+  let totalRecords = 0;
+  let totalPresent = 0;
+
+  for (const session of sessions) {
+    const departmentName = session.course?.department?.name || 'Unassigned';
+    if (!deptMap[departmentName]) deptMap[departmentName] = { totalRecords: 0, presentRecords: 0, sessionsHeld: 0 };
+    deptMap[departmentName].sessionsHeld += 1;
+
+    for (const record of session.records) {
+      deptMap[departmentName].totalRecords += 1;
+      totalRecords += 1;
+      if (record.status === 'present' || record.status === 'late') {
+        deptMap[departmentName].presentRecords += 1;
+        totalPresent += 1;
+      }
+    }
+  }
+
+  const byDepartment = Object.entries(deptMap).map(([departmentName, counts]) => ({
+    departmentName,
+    sessionsHeld: counts.sessionsHeld,
+    percentage: counts.totalRecords ? Math.round((counts.presentRecords / counts.totalRecords) * 100) : 0,
+  }));
+
+  return {
+    averagePercentage: totalRecords ? Math.round((totalPresent / totalRecords) * 100) : 0,
+    sessionsThisMonth: sessions.length,
+    departmentsBelowThreshold: byDepartment.filter((dept) => dept.percentage < 75).length,
+    byDepartment,
+  };
+}
+
 module.exports = {
   createAttendanceSession,
   getSessionsForCourse,
@@ -104,4 +148,5 @@ module.exports = {
   getStudentAttendanceHistory,
   getStudentAttendanceSummary,
   getCourseAttendanceReport,
+  getMonthlyAttendanceReport,
 };

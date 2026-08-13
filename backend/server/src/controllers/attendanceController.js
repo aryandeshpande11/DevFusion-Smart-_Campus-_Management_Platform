@@ -42,6 +42,11 @@ const getCourseReport = catchAsync(async function handleGetCourseReport(req, res
   return sendSuccess(res, 200, 'Report fetched', { report });
 });
 
+const getMonthlyReport = catchAsync(async function handleGetMonthlyReport(req, res) {
+  const report = await attendanceService.getMonthlyAttendanceReport();
+  return sendSuccess(res, 200, 'Monthly report fetched', { report });
+});
+
 module.exports = {
   createSession,
   getSessionsForCourse,
@@ -50,4 +55,5 @@ module.exports = {
   getMyHistory,
   getMySummary,
   getCourseReport,
+  getMonthlyReport,
 };

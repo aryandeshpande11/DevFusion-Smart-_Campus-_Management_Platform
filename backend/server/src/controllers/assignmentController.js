@@ -1,6 +1,8 @@
 const assignmentService = require('../services/assignmentService');
+const notificationService = require('../services/notificationService');
 const { sendSuccess } = require('../utils/response');
 const { catchAsync } = require('../middlewares/errorHandler');
+const { emitNotificationToUser } = require('../sockets/socketHandlers');
 
 const createAssignment = catchAsync(async function handleCreateAssignment(req, res) {
   const assignment = await assignmentService.createAssignment(req.currentUser.id, req.body);
@@ -42,6 +44,15 @@ const getSubmissions = catchAsync(async function handleGetSubmissions(req, res) 
 
 const reviewSubmission = catchAsync(async function handleReviewSubmission(req, res) {
   const submission = await assignmentService.reviewSubmission(req.params.id, req.body);
+
+  const notification = await notificationService.createNotification(submission.studentId, {
+    type: 'assignment_reviewed',
+    title: 'Assignment graded',
+    message: `Your submission was reviewed — marks: ${submission.marks ?? 'N/A'}`,
+    link: `/app/student/assignments`,
+  });
+  emitNotificationToUser(req.app.get('io'), submission.studentId, notification);
+
   return sendSuccess(res, 200, 'Submission reviewed', { submission });
 });
 
