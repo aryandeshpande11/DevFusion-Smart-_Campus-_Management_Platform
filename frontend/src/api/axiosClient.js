@@ -30,41 +30,49 @@ const resolvePendingQueue = (error, token = null) => {
 };
 
 axiosClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    const isAuthRoute = originalRequest?.url?.includes("/auth/");
+    (response) => {
+      // backend replies as { success, message, data } — unwrap it here, once,
+      // so every api/*.js file can keep doing `.then((res) => res.data)` and
+      // get the actual payload instead of the envelope around it
+      if (response.data && typeof response.data === "object" && "success" in response.data) {
+        response.data = response.data.data;
+      }
+      return response;
+    },
+    async (error) => {
+      const originalRequest = error.config;
+      const isAuthRoute = originalRequest?.url?.includes("/auth/");
 
-    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          pendingQueue.push({ resolve, reject });
-        }).then((token) => {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
+      if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            pendingQueue.push({ resolve, reject });
+          }).then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return axiosClient(originalRequest);
+          });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          const { data } = await axiosClient.post("/auth/refresh-token");
+          useAuthStore.getState().setAccessToken(data.accessToken);
+          resolvePendingQueue(null, data.accessToken);
+          originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
           return axiosClient(originalRequest);
-        });
+        } catch (refreshError) {
+          resolvePendingQueue(refreshError, null);
+          useAuthStore.getState().clearSession();
+          return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
+        }
       }
 
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        const { data } = await axiosClient.post("/auth/refresh-token");
-        useAuthStore.getState().setAccessToken(data.accessToken);
-        resolvePendingQueue(null, data.accessToken);
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
-        return axiosClient(originalRequest);
-      } catch (refreshError) {
-        resolvePendingQueue(refreshError, null);
-        useAuthStore.getState().clearSession();
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
+      return Promise.reject(error);
     }
-
-    return Promise.reject(error);
-  }
 );
 
 export default axiosClient;

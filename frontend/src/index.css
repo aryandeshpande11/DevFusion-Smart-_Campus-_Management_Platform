@@ -33,4 +33,15 @@
   .fieldInput {
     @apply w-full rounded-lg border border-border bg-surface dark:bg-ink/30 dark:border-white/10 px-3.5 py-2.5 text-sm outline-none transition focus:border-brand-500;
   }
+
+  /* pill toggle group used for chart period switches (1W / 1M / 3M style) */
+  .tabPill {
+    @apply rounded-lg px-3 py-1.5 text-xs font-medium transition;
+  }
+  .tabPill[data-active="true"] {
+    @apply bg-ink text-canvas dark:bg-white dark:text-ink;
+  }
+  .tabPill[data-active="false"] {
+    @apply text-muted hover:bg-black/5 dark:hover:bg-white/5;
+  }
 }

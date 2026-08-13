@@ -30,4 +30,4 @@ export const logOutCurrentUser = () =>
   axiosClient.post("/auth/logout").then((res) => res.data);
 
 export const fetchLoggedInUser = () =>
-  axiosClient.get("/auth/me").then((res) => res.data);
+  axiosClient.get("/auth/me").then((res) => res.data.user);
