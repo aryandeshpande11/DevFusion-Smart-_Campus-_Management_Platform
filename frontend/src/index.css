@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* base document setup — dark mode flips canvas/ink, everything else inherits */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+  }
+  .dark body {
+    @apply bg-ink text-canvas;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+  :focus-visible {
+    outline: 2px solid theme("colors.brand.500");
+    outline-offset: 2px;
+  }
+}
+
+/* small reusable utility classes used across cards, badges and inputs */
+@layer components {
+  .surfaceCard {
+    @apply bg-surface dark:bg-ink/40 border border-border dark:border-white/10 rounded-card shadow-card;
+  }
+  .fieldInput {
+    @apply w-full rounded-lg border border-border bg-surface dark:bg-ink/30 dark:border-white/10 px-3.5 py-2.5 text-sm outline-none transition focus:border-brand-500;
+  }
+}
