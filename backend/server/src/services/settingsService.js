@@ -1,12 +1,17 @@
 // business logic for per-user preferences and the danger-zone account deletion
 const db = require('../config/db');
 
-// upserts because a brand-new user might not have a settings row yet
+// upserts because a brand-new user might not have a settings row yet.
+// Using upsert (not find-then-create) matters here: the dashboard fires
+// several requests on load, so two concurrent calls could both find no
+// existing row and both try to create one, tripping the unique constraint
+// on user_id. Upsert makes that race safe.
 async function getUserSettings(userId) {
-  const existingSettings = await db.settings.findUnique({ where: { userId } });
-  if (existingSettings) return existingSettings;
-
-  return db.settings.create({ data: { userId } });
+  return db.settings.upsert({
+    where: { userId },
+    update: {},
+    create: { userId },
+  });
 }
 
 async function updateUserSettings(userId, updates) {

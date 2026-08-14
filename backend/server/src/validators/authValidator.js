@@ -5,7 +5,8 @@ const signupSchema = z.object({
   name: z.string().min(2, 'Name is too short'),
   email: z.string().email('Enter a valid email'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
-  roleId: z.string().uuid().optional(),
+  // admin accounts are provisioned separately, never through public signup
+  role: z.enum(['student', 'faculty', 'coordinator']).optional(),
 });
 
 const loginSchema = z.object({

@@ -18,10 +18,8 @@ export const useAuth = () => {
   };
 
   const signUp = async (formValues) => {
-    const { user, accessToken } = await signUpWithEmail(formValues);
-    startSession(user, accessToken);
-    navigate("/verify-email");
-    return user;
+    await signUpWithEmail(formValues);
+    navigate("/verify-email", { state: { email: formValues.email } });
   };
 
   const logOut = async () => {

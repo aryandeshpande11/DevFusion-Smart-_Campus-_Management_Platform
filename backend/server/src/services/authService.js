@@ -11,22 +11,33 @@ const env = require('../config/env');
 const SALT_ROUNDS = 12;
 
 // creates a new user with hashed password and fires off the verification email
-async function signupNewUser({ name, email, password, roleId }) {
+async function signupNewUser({ name, email, password, role }) {
   const existingUser = await db.user.findUnique({ where: { email } });
   if (existingUser) {
     throw new AppError('An account with this email already exists', 409);
   }
 
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const defaultRole = roleId ? { id: roleId } : await db.role.findUnique({ where: { name: 'student' } });
+  const targetRole = await db.role.findUnique({ where: { name: role || 'student' } });
+  if (!targetRole) {
+    throw new AppError('Selected role is not available', 400);
+  }
 
   const newUser = await db.user.create({
-    data: { name, email, passwordHash, roleId: defaultRole.id },
+    data: { name, email, passwordHash, roleId: targetRole.id },
   });
 
+  // verification email is best-effort: if SMTP isn't reachable/configured the
+  // account should still exist so the person isn't stuck retrying signup
+  // against an email that's already taken
   const emailToken = createEmailToken(newUser.id);
   const verifyLink = `${env.clientUrl}/verify-email?token=${emailToken}`;
-  await sendVerificationEmail(email, verifyLink);
+  try {
+    await sendVerificationEmail(email, verifyLink);
+  } catch (err) {
+    console.warn(`signup: verification email failed to send for ${email}: ${err.message}`);
+    console.warn(`signup: verify manually using this link -> ${verifyLink}`);
+  }
 
   return newUser;
 }
