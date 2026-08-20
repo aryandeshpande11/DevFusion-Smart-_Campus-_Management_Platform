@@ -4,27 +4,28 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
-      // campus brand palette — deep academic green + muted gold seal accent,
-      // kept away from the generic indigo/violet SaaS default. sky + rose are
-      // desaturated companions used only for stat-tile variety, not primary UI.
+      // AleBaple brand palette — matches the landing page: ink/white base,
+      // confident blue as the one primary color, warm gold used sparingly as
+      // a seal/accent (never a second primary). sky + rose stay desaturated
+      // companions for stat-tile variety only, not primary UI.
       colors: {
-        ink: "#14231F",
-        canvas: "#F6F7F3",
+        ink: "#171923",
+        canvas: "#F7F8FA",
         surface: "#FFFFFF",
-        border: "#E1E4DD",
-        muted: "#5B6660",
+        border: "#ECEDF1",
+        muted: "#4A5568",
         brand: {
-          50: "#EAF3EF",
-          100: "#CFE4DA",
-          300: "#6FA890",
-          500: "#1F6F54",
-          600: "#195A44",
-          700: "#134534",
+          50: "#EFF3FF",
+          100: "#DCE6FF",
+          300: "#93B4FA",
+          500: "#2563EB",
+          600: "#1D4ED8",
+          700: "#1E40AF",
         },
         gold: {
-          100: "#F3E6C5",
-          400: "#C89B3C",
-          600: "#9C7728",
+          100: "#FDF0D9",
+          400: "#FDBA4C",
+          600: "#B9821F",
         },
         sky: {
           50: "#EAF1F5",
