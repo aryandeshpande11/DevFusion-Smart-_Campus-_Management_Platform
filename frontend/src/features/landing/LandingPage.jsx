@@ -1,172 +1,249 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  GraduationCap,
   CalendarCheck,
   Ticket,
   Briefcase,
   Bell,
-  ShieldCheck,
+  BookOpenCheck,
+  Users,
+  CheckSquare,
+  Clock,
 } from "lucide-react";
-import Button from "../../components/common/Button.jsx";
 import { Card } from "../../components/common/Card.jsx";
 
-const featureList = [
-  { icon: CalendarCheck, title: "Attendance", body: "QR self check-in and subject-wise history, no more paper registers." },
-  { icon: Ticket, title: "Events", body: "Create, register and check in attendees with a scannable pass." },
-  { icon: Briefcase, title: "Placements", body: "Post openings, track applications, and shortlist without spreadsheets." },
-  { icon: Bell, title: "Notices", body: "Announcements reach exactly the department and role they're meant for." },
-];
+// Landing-only mark — the dashboard/sidebar keeps its GraduationCap icon,
+// this is just for the marketing page. A loose cluster of three shapes
+// rather than an even grid, so it reads as its own thing.
+function Logo({ size = 36 }) {
+  return (
+      <span
+          className="relative shrink-0 rounded-xl bg-white shadow-[0_1px_3px_rgba(23,25,35,0.15)]"
+          style={{ width: size, height: size }}
+      >
+      <span
+          className="absolute rounded-lg bg-[#2563EB]"
+          style={{ width: size * 0.46, height: size * 0.46, left: size * 0.14, top: size * 0.14 }}
+      />
+      <span
+          className="absolute rounded-full bg-[#171923]"
+          style={{ width: size * 0.3, height: size * 0.3, right: size * 0.12, bottom: size * 0.12 }}
+      />
+      <span
+          className="absolute rounded-full bg-[#FDBA4C]"
+          style={{ width: size * 0.16, height: size * 0.16, right: size * 0.1, top: size * 0.1 }}
+      />
+    </span>
+  );
+}
 
-const statList = [
-  { value: "12k+", label: "Students onboarded" },
-  { value: "480+", label: "Faculty using it weekly" },
-  { value: "97%", label: "Attendance marked on time" },
-  { value: "4 roles", label: "Student, faculty, coordinator, admin" },
+const featureList = [
+  {
+    icon: CalendarCheck,
+    title: "Attendance",
+    body: "Scan a QR at the start of class, done. Subject-wise history so nobody has to dig through a register.",
+    accent: "bg-[#EEF2FF] text-[#4338CA]",
+  },
+  {
+    icon: BookOpenCheck,
+    title: "Assignments",
+    body: "Deadlines, submissions and grading live in one thread instead of scattered email attachments.",
+    accent: "bg-[#FDF2F8] text-[#BE185D]",
+  },
+  {
+    icon: Ticket,
+    title: "Events",
+    body: "Put an event up, let people register, scan them in at the door with a pass.",
+    accent: "bg-[#FFF7ED] text-[#C2410C]",
+  },
+  {
+    icon: Briefcase,
+    title: "Placements",
+    body: "Openings, applications and shortlisting in one place — not a spreadsheet someone forgot to update.",
+    accent: "bg-[#ECFDF5] text-[#047857]",
+  },
+  {
+    icon: Users,
+    title: "Clubs",
+    body: "Membership requests and approvals tracked properly, instead of buried three days deep in a group chat.",
+    accent: "bg-[#F5F3FF] text-[#6D28D9]",
+  },
+  {
+    icon: Bell,
+    title: "Notices",
+    body: "Announcements go to the right department and role — not a blast every student has to filter through.",
+    accent: "bg-[#EFF6FF] text-[#1D4ED8]",
+  },
 ];
 
 const faqList = [
-  { q: "Can faculty and students share one login system?", a: "Yes — one account, role-based access. What you see depends on your role, not a separate portal." },
-  { q: "Does it work on a phone?", a: "The whole platform is responsive, and QR attendance is built for scanning on mobile." },
-  { q: "Is data separated by department?", a: "Notices, courses and reports are scoped so a department only sees what's relevant to it." },
+  { q: "Do faculty and students use the same login?", a: "One account, different dashboard depending on your role — student, faculty, coordinator or admin." },
+  { q: "Does it work on a phone?", a: "Yes, the whole thing is responsive, and QR attendance is built for scanning on a phone camera." },
+  { q: "Is data separated by department?", a: "Notices, courses and reports are scoped so a department only sees what's actually relevant to it." },
 ];
 
 export default function LandingPage() {
   return (
-    <div className="bg-canvas text-ink dark:bg-ink dark:text-canvas">
-      {/* top navigation */}
-      <header className="flex items-center justify-between px-6 py-5 lg:px-16">
-        <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-500 text-white">
-            <GraduationCap size={18} />
-          </span>
-          <span className="font-display text-lg font-semibold">CampusConnect</span>
-        </div>
-        <nav className="hidden items-center gap-8 text-sm text-muted md:flex">
-          <a href="#features">Features</a>
-          <a href="#stats">Statistics</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-        <div className="flex items-center gap-3">
-          <Link to="/login" className="text-sm font-medium">
-            Log in
-          </Link>
-          <Link to="/signup">
-            <Button size="sm">Get started</Button>
-          </Link>
-        </div>
-      </header>
-
-      {/* hero section */}
-      <section className="grid grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:px-16 lg:py-24">
-        <div>
-          <span className="inline-flex items-center rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 dark:bg-white/10 dark:text-brand-300">
-            EdTech · SaaS · Productivity
-          </span>
-          <h1 className="mt-5 font-display text-4xl font-semibold leading-tight lg:text-5xl">
-            Every campus workflow, out of the WhatsApp groups and into one place.
-          </h1>
-          <p className="mt-5 max-w-lg text-muted">
-            Attendance, assignments, events, placements and clubs — one
-            platform for students, faculty, coordinators and admins, with
-            role-based dashboards for each.
-          </p>
-          <div className="mt-8 flex gap-3">
-            <Link to="/signup">
-              <Button>Create your account</Button>
-            </Link>
-            <Link to="/login">
-              <Button variant="outline">I already have one</Button>
-            </Link>
+      <div className="bg-white text-[#171923]">
+        {/* top navigation */}
+        <header className="flex items-center justify-between px-6 py-5 lg:px-16">
+          <div className="flex items-center gap-2.5">
+            <Logo size={34} />
+            <span className="font-display text-lg font-semibold">AleBaple</span>
           </div>
-        </div>
-        <Card className="p-8">
-          <p className="text-sm text-muted">Today at a glance</p>
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <div>
-              <p className="font-display text-3xl font-semibold">96%</p>
-              <p className="text-xs text-muted">Attendance marked</p>
-            </div>
-            <div>
-              <p className="font-display text-3xl font-semibold">18</p>
-              <p className="text-xs text-muted">Assignments due this week</p>
-            </div>
-            <div>
-              <p className="font-display text-3xl font-semibold">5</p>
-              <p className="text-xs text-muted">Events open for registration</p>
-            </div>
-            <div>
-              <p className="font-display text-3xl font-semibold">3</p>
-              <p className="text-xs text-muted">New placement drives</p>
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* feature grid */}
-      <section id="features" className="px-6 py-16 lg:px-16">
-        <h2 className="font-display text-2xl font-semibold">Built around what a campus actually does</h2>
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featureList.map((feature) => (
-            <Card key={feature.title}>
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-white/5 dark:text-brand-300">
-                <feature.icon size={18} />
-              </span>
-              <h3 className="mt-4 font-display text-lg font-medium">{feature.title}</h3>
-              <p className="mt-1 text-sm text-muted">{feature.body}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* statistics */}
-      <section id="stats" className="bg-brand-700 px-6 py-16 text-white lg:px-16">
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
-          {statList.map((stat) => (
-            <div key={stat.label}>
-              <p className="font-display text-3xl font-semibold">{stat.value}</p>
-              <p className="mt-1 text-sm text-brand-100">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* testimonial */}
-      <section className="px-6 py-16 lg:px-16">
-        <Card className="mx-auto max-w-2xl text-center">
-          <ShieldCheck className="mx-auto text-brand-600" size={22} />
-          <p className="mt-4 font-display text-xl leading-relaxed">
-            "We replaced four different tools and a dozen WhatsApp groups
-            with one dashboard our faculty actually opens every morning."
-          </p>
-          <p className="mt-3 text-sm text-muted">Dean of Student Affairs</p>
-        </Card>
-      </section>
-
-      {/* faq */}
-      <section id="faq" className="px-6 py-16 lg:px-16">
-        <h2 className="font-display text-2xl font-semibold">Frequently asked</h2>
-        <div className="mt-8 flex flex-col gap-4">
-          {faqList.map((item) => (
-            <Card key={item.q}>
-              <p className="font-medium">{item.q}</p>
-              <p className="mt-1 text-sm text-muted">{item.a}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* footer */}
-      <footer className="border-t border-border px-6 py-10 text-sm text-muted lg:px-16 dark:border-white/10">
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <span>© {new Date().getFullYear()} CampusConnect</span>
-          <div className="flex gap-6">
+          <nav className="hidden items-center gap-8 text-sm text-[#4A5568] md:flex">
             <a href="#features">Features</a>
             <a href="#faq">FAQ</a>
-            <Link to="/login">Log in</Link>
+          </nav>
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="text-sm font-medium">
+              Sign in
+            </Link>
+            <Link
+                to="/signup"
+                className="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#1D4ED8]"
+            >
+              Get started
+            </Link>
           </div>
-        </div>
-      </footer>
-    </div>
+        </header>
+
+        {/* hero — dotted card background with floating mockup pieces, no big
+          stock photo, closer to the reference than the old dark-overlay hero */}
+        <section className="relative mx-4 mt-2 overflow-hidden rounded-[28px] border border-[#ECEDF1] lg:mx-10">
+          <div
+              className="absolute inset-0"
+              style={{
+                backgroundColor: "#FAFAFC",
+                backgroundImage:
+                    "linear-gradient(#ECEDF1 1px, transparent 1px), linear-gradient(90deg, #ECEDF1 1px, transparent 1px)",
+                backgroundSize: "40px 40px",
+              }}
+          />
+          <div className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-[#DCE6FF] opacity-50 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-10 h-64 w-64 rounded-full bg-[#FDE9C8] opacity-50 blur-3xl" />
+
+          <div className="relative px-6 pb-24 pt-16 text-center lg:px-16 lg:pt-20">
+            {/* floating pieces — hidden on small screens so it doesn't turn to clutter */}
+            <div className="pointer-events-none absolute left-10 top-8 hidden rotate-2 lg:block xl:left-20">
+              <div className="w-48 rounded-xl bg-[#FEF3C7] p-4 text-left text-sm text-[#78350F] shadow-[0_8px_20px_-6px_rgba(23,25,35,0.25)]">
+                Mark attendance in one scan, skip the roll call.
+              </div>
+            </div>
+
+            <div className="pointer-events-none absolute right-6 top-20 hidden -rotate-3 lg:block xl:right-16">
+              <div className="w-56 rounded-xl border border-[#ECEDF1] bg-white p-4 text-left shadow-[0_8px_20px_-6px_rgba(23,25,35,0.2)]">
+                <p className="text-xs font-medium text-[#8A93A6]">Reminder</p>
+                <p className="mt-1 text-sm font-medium">DBMS Lecture</p>
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-[#4A5568]">
+                  <Clock size={12} /> Room 204 · 10:00–10:50
+                </p>
+              </div>
+            </div>
+
+            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center">
+              <Logo size={56} />
+            </div>
+
+            <h1 className="mx-auto max-w-2xl font-display text-4xl font-semibold leading-tight lg:text-5xl">
+              Everything your campus runs on,
+            </h1>
+            <h1 className="mx-auto max-w-2xl font-display text-4xl font-semibold leading-tight text-[#9AA1B2] lg:text-5xl">
+              out of the group chats
+            </h1>
+
+            <p className="mx-auto mt-5 max-w-md text-[#4A5568]">
+              Attendance, assignments, events, placements and clubs — one login,
+              with a dashboard that actually matches what your role needs to do.
+            </p>
+
+            <div className="mt-8 flex justify-center gap-3">
+              <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#1D4ED8]"
+              >
+                Get started free
+              </Link>
+              <Link
+                  to="/login"
+                  className="inline-flex items-center justify-center rounded-lg border border-[#D9DBE3] px-5 py-2.5 text-sm font-medium text-[#171923] transition hover:bg-[#F3F4F7]"
+              >
+                I already have an account
+              </Link>
+            </div>
+
+            {/* bottom-left mockup: today's tasks, no invented percentages */}
+            <div className="pointer-events-none absolute -bottom-8 left-10 hidden w-56 rotate-1 rounded-xl border border-[#ECEDF1] bg-white p-4 text-left shadow-[0_10px_24px_-8px_rgba(23,25,35,0.22)] lg:block xl:left-24">
+              <p className="text-xs font-medium text-[#8A93A6]">Today</p>
+              <div className="mt-2 space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckSquare size={14} className="text-[#2563EB]" />
+                  <span>Submit DBMS assignment</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckSquare size={14} className="text-[#D9DBE3]" />
+                  <span className="text-[#8A93A6]">Club meeting sign-up</span>
+                </div>
+              </div>
+            </div>
+
+            {/* bottom-right mockup: what's actually in the platform, not fake logos */}
+            <div className="pointer-events-none absolute -bottom-10 right-10 hidden w-56 -rotate-2 rounded-xl border border-[#ECEDF1] bg-white p-4 text-left shadow-[0_10px_24px_-8px_rgba(23,25,35,0.22)] lg:block xl:right-24">
+              <p className="text-xs font-medium text-[#8A93A6]">One login for</p>
+              <div className="mt-2 flex gap-2">
+                {[CalendarCheck, BookOpenCheck, Ticket, Briefcase].map((Icon, i) => (
+                    <span
+                        key={i}
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#EEF2FF] text-[#4338CA]"
+                    >
+                  <Icon size={14} />
+                </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* feature grid */}
+        <section id="features" className="px-6 py-24 lg:px-16">
+          <h2 className="font-display text-2xl font-semibold">Built around what a campus actually does</h2>
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {featureList.map((feature) => (
+                <Card key={feature.title} className="border-none shadow-[0_1px_2px_rgba(23,25,35,0.06)]">
+              <span className={`flex h-10 w-10 items-center justify-center rounded-full ${feature.accent}`}>
+                <feature.icon size={18} />
+              </span>
+                  <h3 className="mt-4 font-display text-lg font-medium">{feature.title}</h3>
+                  <p className="mt-1 text-sm text-[#4A5568]">{feature.body}</p>
+                </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* faq */}
+        <section id="faq" className="px-6 py-4 pb-24 lg:px-16">
+          <h2 className="font-display text-2xl font-semibold">Frequently asked</h2>
+          <div className="mt-8 flex flex-col gap-4">
+            {faqList.map((item) => (
+                <Card key={item.q} className="border-none shadow-[0_1px_2px_rgba(23,25,35,0.06)]">
+                  <p className="font-medium">{item.q}</p>
+                  <p className="mt-1 text-sm text-[#4A5568]">{item.a}</p>
+                </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* footer */}
+        <footer className="border-t border-[#E2E4EA] px-6 py-10 text-sm text-[#4A5568] lg:px-16">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <span>© {new Date().getFullYear()} AleBaple · DevFusion 4.0</span>
+            <div className="flex gap-6">
+              <a href="#features">Features</a>
+              <a href="#faq">FAQ</a>
+              <Link to="/login">Sign in</Link>
+            </div>
+          </div>
+        </footer>
+      </div>
   );
 }
