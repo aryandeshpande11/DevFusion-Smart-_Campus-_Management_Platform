@@ -29,7 +29,6 @@ import CoordinatorOverview from "./features/dashboard/coordinator/CoordinatorOve
 import CoordinatorEvents from "./features/dashboard/coordinator/CoordinatorEvents.jsx";
 import CoordinatorClubs from "./features/dashboard/coordinator/CoordinatorClubs.jsx";
 import CoordinatorApprovals from "./features/dashboard/coordinator/CoordinatorApprovals.jsx";
-
 import AdminOverview from "./features/dashboard/admin/AdminOverview.jsx";
 import AdminUsers from "./features/dashboard/admin/AdminUsers.jsx";
 import AdminDepartments from "./features/dashboard/admin/AdminDepartments.jsx";
@@ -86,13 +85,23 @@ export default function App() {
               </Route>
             </Route>
 
-            {/* coordinator */}
+            {/* coordinator — also gets the admin management pages (users,
+                departments, courses, attendance reports, placements, site
+                reports) reusing the same Admin* components, since this
+                deployment doesn't have a separate provisioned admin account
+                yet. Backend RBAC for these routes allows 'coordinator' too. */}
             <Route element={<RoleRoute allowedRoles={["coordinator"]} />}>
               <Route path="/app/coordinator" element={<DashboardLayout role="coordinator" />}>
                 <Route index element={<CoordinatorOverview />} />
                 <Route path="events" element={<CoordinatorEvents />} />
                 <Route path="clubs" element={<CoordinatorClubs />} />
                 <Route path="approvals" element={<CoordinatorApprovals />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="departments" element={<AdminDepartments />} />
+                <Route path="courses" element={<AdminCourses />} />
+                <Route path="attendance" element={<AdminAttendance />} />
+                <Route path="placements" element={<AdminPlacements />} />
+                <Route path="reports" element={<AdminReports />} />
                 <Route path="notices" element={<NoticesPage canPublish />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="settings" element={<SettingsPage />} />

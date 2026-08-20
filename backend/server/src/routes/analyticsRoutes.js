@@ -5,7 +5,7 @@ const { requireRole } = require('../middlewares/rbac');
 
 const router = express.Router();
 
-router.use(requireAuth, requireRole(['admin']));
+router.use(requireAuth, requireRole(['admin', 'coordinator']));
 
 router.get('/overview', analyticsController.getOverview);
 router.get('/attendance', analyticsController.getAttendanceStats);

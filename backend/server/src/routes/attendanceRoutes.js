@@ -21,6 +21,6 @@ router.post('/sessions/:id/scan', requireRole(['student']), validateBody(scanAtt
 router.get('/me/history', requireRole(['student']), attendanceController.getMyHistory);
 router.get('/me/summary', requireRole(['student']), attendanceController.getMySummary);
 
-router.get('/reports/:courseId', requireRole(['faculty', 'admin']), attendanceController.getCourseReport);
+router.get('/reports/:courseId', requireRole(['faculty', 'admin', 'coordinator']), attendanceController.getCourseReport);
 
 module.exports = router;

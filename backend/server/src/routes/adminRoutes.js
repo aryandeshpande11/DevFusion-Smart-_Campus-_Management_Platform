@@ -5,7 +5,7 @@ const { requireRole } = require('../middlewares/rbac');
 
 const router = express.Router();
 
-router.use(requireAuth, requireRole(['admin']));
+router.use(requireAuth, requireRole(['admin', 'coordinator']));
 
 router.get('/logs', analyticsController.getActivityLogs);
 router.get('/export/:entity', analyticsController.exportEntityData);

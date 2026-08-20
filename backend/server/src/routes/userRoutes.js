@@ -16,10 +16,10 @@ router.post('/me/avatar', uploadRateLimiter, upload.single('avatar'), userContro
 router.post('/me/resume', uploadRateLimiter, upload.single('resume'), userController.uploadMyResume);
 
 // admin/faculty management routes
-router.get('/', requireRole(['admin']), userController.listUsers);
-router.get('/:id', requireRole(['admin', 'faculty']), userController.getUserById);
-router.patch('/:id/role', requireRole(['admin']), userController.updateUserRole);
-router.patch('/:id/status', requireRole(['admin']), userController.updateUserStatus);
-router.delete('/:id', requireRole(['admin']), userController.deleteUser);
+router.get('/', requireRole(['admin', 'coordinator']), userController.listUsers);
+router.get('/:id', requireRole(['admin', 'faculty', 'coordinator']), userController.getUserById);
+router.patch('/:id/role', requireRole(['admin', 'coordinator']), userController.updateUserRole);
+router.patch('/:id/status', requireRole(['admin', 'coordinator']), userController.updateUserStatus);
+router.delete('/:id', requireRole(['admin', 'coordinator']), userController.deleteUser);
 
 module.exports = router;
