@@ -28,6 +28,7 @@ export default function CoordinatorEvents() {
       await createEvent({
         ...formValues,
         seatsTotal: Number(formValues.seatsTotal),
+        registrationDeadline: new Date(formValues.registrationDeadline).toISOString(),
       });
       showToast?.("Event created");
       setIsModalOpen(false);
