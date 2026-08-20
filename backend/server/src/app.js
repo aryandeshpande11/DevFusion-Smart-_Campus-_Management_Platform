@@ -25,6 +25,11 @@ const settingsRoutes = require('./routes/settingsRoutes');
 
 const app = express();
 
+// Render (and most PaaS hosts) sit behind a reverse proxy, so Express needs
+// this to trust the X-Forwarded-For header — otherwise express-rate-limit
+// can't reliably tell users apart and logs a warning on every request.
+app.set('trust proxy', 1);
+
 // security + parsing middleware
 app.use(helmet());
 // CLIENT_URL can be a single origin or a comma-separated list (e.g. your
@@ -34,19 +39,19 @@ app.use(helmet());
 const allowedOrigins = env.clientUrl.split(',').map((url) => url.trim());
 
 app.use(
-  cors({
-    origin(origin, callback) {
-      // no origin header = server-to-server or curl/Postman, not a browser — allow it
-      if (!origin) return callback(null, true);
+    cors({
+        origin(origin, callback) {
+            // no origin header = server-to-server or curl/Postman, not a browser — allow it
+            if (!origin) return callback(null, true);
 
-      const isExplicitlyAllowed = allowedOrigins.includes(origin);
-      const isVercelPreview = /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
+            const isExplicitlyAllowed = allowedOrigins.includes(origin);
+            const isVercelPreview = /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin);
 
-      if (isExplicitlyAllowed || isVercelPreview) return callback(null, true);
-      return callback(new Error(`CORS: origin ${origin} is not allowed`));
-    },
-    credentials: true,
-  })
+            if (isExplicitlyAllowed || isVercelPreview) return callback(null, true);
+            return callback(new Error(`CORS: origin ${origin} is not allowed`));
+        },
+        credentials: true,
+    })
 );
 app.use(express.json());
 app.use(cookieParser());

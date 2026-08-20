@@ -30,13 +30,12 @@ async function signupNewUser({ name, email, password, role }) {
   // verification email is best-effort: if SMTP isn't reachable/configured the
   // account should still exist so the person isn't stuck retrying signup
   // against an email that's already taken
-  const emailToken = createEmailToken(newUser.id);
-  const verifyLink = `${env.clientUrl}/verify-email?token=${emailToken}`;
   try {
+    const emailToken = createEmailToken(newUser.id);
+    const verifyLink = `${env.clientUrl}/verify-email?token=${emailToken}`;
     await sendVerificationEmail(email, verifyLink);
   } catch (err) {
     console.warn(`signup: verification email failed to send for ${email}: ${err.message}`);
-    console.warn(`signup: verify manually using this link -> ${verifyLink}`);
   }
 
   return newUser;
