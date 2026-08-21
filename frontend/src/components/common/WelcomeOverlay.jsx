@@ -30,7 +30,7 @@ export default function WelcomeOverlay({ name, onDone }) {
             >
                 <Logo size={46} />
                 <p className="font-display text-2xl font-semibold">
-                    Welcome back{name ? `, ${name}` : ""} <span aria-hidden>👋</span>
+                    Welcome back{name ? `, ${name}` : ""}
                 </p>
                 <p className="text-sm text-muted">Getting your dashboard ready…</p>
             </div>

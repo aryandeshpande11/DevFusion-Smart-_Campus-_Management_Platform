@@ -29,9 +29,9 @@ export default function LoginPage() {
 
     return (
         <AuthLayout title="Log in" subtitle="Welcome back — pick up right where you left off.">
-            <div className="mb-5 rounded-lg border border-gold-400/40 bg-gold-100/60 px-3.5 py-2.5 text-xs text-ink dark:border-white/10 dark:bg-white/5 dark:text-canvas">
-                👋 First time here? <span className="font-medium">Continue with Google</span> below is
-                the fastest way in — or create an account with any college email.
+            <div className="mb-5 rounded-lg border border-border bg-canvas px-3.5 py-2.5 text-xs text-muted">
+                First time here? <span className="font-medium text-ink">Continue with Google</span> is
+                the quickest way in, or create an account with any college email.
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
                 type="button"
                 variant="outline"
                 fullWidth
-                className="border-2 border-ink/15 hover:border-ink/25 dark:border-white/25 dark:hover:border-white/40"
+                className="border-2 border-emerald-500/60 hover:border-emerald-500"
                 onClick={() => {
                     // full-page redirect (not a fetch call) — kicks off the backend's
                     // passport/Google OAuth flow, which redirects back to /oauth-success
@@ -89,7 +89,7 @@ export default function LoginPage() {
             >
                 Continue with Google
             </Button>
-            <p className="mt-2 text-center text-xs text-muted">⚡ Fastest login — no password needed</p>
+            <p className="mt-2 text-center text-xs text-muted">Fastest login — no password needed</p>
 
             <p className="mt-6 text-center text-sm text-muted">
                 New here?{" "}

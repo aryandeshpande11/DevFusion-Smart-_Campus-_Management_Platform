@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastProvider } from "./components/common/Toast.jsx";
-import { useUiStore } from "./store/uiStore.js";
 
 import LandingPage from "./features/landing/LandingPage.jsx";
 import LoginPage from "./features/auth/LoginPage.jsx";
@@ -47,15 +46,6 @@ import SettingsPage from "./features/shared/SettingsPage.jsx";
 // top-level route map — public pages, auth pages, then one protected
 // /app/<role> subtree per role, each guarded so only that role can enter
 export default function App() {
-  // dark mode was already tracked in uiStore and toggleable from the
-  // topbar, but nothing ever applied it — tailwind's `dark:` variants need
-  // a `dark` class on a parent element, so sync it here at the root.
-  const isDarkMode = useUiStore((state) => state.isDarkMode);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", isDarkMode);
-  }, [isDarkMode]);
-
   return (
       <ToastProvider>
         <Routes>
