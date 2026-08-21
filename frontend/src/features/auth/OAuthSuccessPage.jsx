@@ -37,6 +37,18 @@ export default function OAuthSuccessPage() {
                 setAccessToken(accessToken);
                 const user = await fetchLoggedInUser();
                 startSession(user, accessToken);
+
+                // Google gives us name/email/photo only — a first-time Google
+                // sign-in (or an older account that never went through the
+                // department/semester step) can still be missing them, so send
+                // those cases to fill it in before landing on the dashboard
+                const missingDepartment = (user.role === "student" || user.role === "faculty") && !user.departmentId;
+                const missingSemester = user.role === "student" && !user.semester;
+                if (missingDepartment || missingSemester) {
+                    navigate("/complete-profile", { replace: true });
+                    return;
+                }
+
                 navigate(`/app/${user.role}`, { replace: true, state: { justLoggedIn: true } });
             } catch (error) {
                 setErrorMessage("Couldn't complete Google sign-in. Please try again.");

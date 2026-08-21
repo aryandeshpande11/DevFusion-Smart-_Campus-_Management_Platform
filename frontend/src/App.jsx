@@ -8,6 +8,7 @@ import SignupPage from "./features/auth/SignupPage.jsx";
 import ForgotPasswordPage from "./features/auth/ForgotPasswordPage.jsx";
 import VerifyEmailPage from "./features/auth/VerifyEmailPage.jsx";
 import OAuthSuccessPage from "./features/auth/OAuthSuccessPage.jsx";
+import CompleteProfilePage from "./features/auth/CompleteProfilePage.jsx";
 
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import RoleRoute from "./routes/RoleRoute.jsx";
@@ -57,6 +58,10 @@ export default function App() {
           <Route path="/oauth-success" element={<OAuthSuccessPage />} />
 
           <Route element={<ProtectedRoute />}>
+            {/* signed in, but Google OAuth never asked for department/semester —
+                gated on auth only, not role, since it applies to student & faculty */}
+            <Route path="/complete-profile" element={<CompleteProfilePage />} />
+
             {/* student */}
             <Route element={<RoleRoute allowedRoles={["student"]} />}>
               <Route path="/app/student" element={<DashboardLayout role="student" />}>
