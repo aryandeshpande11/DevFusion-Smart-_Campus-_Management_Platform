@@ -37,7 +37,7 @@ export default function OAuthSuccessPage() {
                 setAccessToken(accessToken);
                 const user = await fetchLoggedInUser();
                 startSession(user, accessToken);
-                navigate(`/app/${user.role}`, { replace: true });
+                navigate(`/app/${user.role}`, { replace: true, state: { justLoggedIn: true } });
             } catch (error) {
                 setErrorMessage("Couldn't complete Google sign-in. Please try again.");
                 setTimeout(() => navigate("/login", { replace: true }), 1500);

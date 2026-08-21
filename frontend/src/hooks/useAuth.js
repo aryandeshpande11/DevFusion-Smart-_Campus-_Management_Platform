@@ -13,7 +13,9 @@ export const useAuth = () => {
   const logIn = async (credentials) => {
     const { user, accessToken } = await logInWithEmail(credentials);
     startSession(user, accessToken);
-    navigate(`/app/${user.role}`);
+    // flagged in router state (not persisted) so the dashboard shows the
+    // welcome animation once, but a refresh or direct visit never retriggers it
+    navigate(`/app/${user.role}`, { state: { justLoggedIn: true } });
     return user;
   };
 

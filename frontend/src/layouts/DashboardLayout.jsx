@@ -1,7 +1,9 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar.jsx";
 import Topbar from "../components/layout/Topbar.jsx";
+import WelcomeOverlay from "../components/common/WelcomeOverlay.jsx";
+import { useAuth } from "../hooks/useAuth.js";
 
 // shell every role dashboard renders inside — sidebar on the left,
 // topbar + the active page's content (via Outlet) on the right.
@@ -9,8 +11,20 @@ import Topbar from "../components/layout/Topbar.jsx";
 // so the dashboard reads as the same product — kept low-opacity and fixed
 // in the corners so they never sit behind text or compete with real content.
 export default function DashboardLayout({ role }) {
+    const location = useLocation();
+    const { currentUser } = useAuth();
+    // login flows set this router-state flag (not persisted anywhere), so it
+    // only fires once right after signing in — never on refresh or revisit
+    const [showWelcome, setShowWelcome] = useState(Boolean(location.state?.justLoggedIn));
+
     return (
         <div className="flex h-screen overflow-hidden bg-canvas dark:bg-ink">
+            {showWelcome && (
+                <WelcomeOverlay
+                    name={currentUser?.name?.split(" ")[0]}
+                    onDone={() => setShowWelcome(false)}
+                />
+            )}
             <Sidebar role={role} />
             <div className="relative flex flex-1 flex-col overflow-y-auto">
                 <div className="pointer-events-none fixed -right-24 -top-24 h-72 w-72 rounded-full bg-brand-100 opacity-40 blur-3xl dark:opacity-10" />
