@@ -114,7 +114,14 @@ function DemoVideo() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-      <div className="relative mx-auto aspect-video w-full max-w-3xl overflow-hidden rounded-2xl border border-[#ECEDF1] bg-[#0F1117] shadow-[0_20px_50px_-20px_rgba(23,25,35,0.35)]">
+      <div
+          className="relative mx-auto aspect-video w-full max-w-3xl overflow-hidden rounded-2xl border border-[#ECEDF1] bg-[#0F1117] bg-cover bg-center shadow-[0_20px_50px_-20px_rgba(23,25,35,0.35)]"
+          style={
+            !isPlaying
+                ? { backgroundImage: `url(https://img.youtube.com/vi/${DEMO_VIDEO_ID}/maxresdefault.jpg)` }
+                : undefined
+          }
+      >
         {isPlaying ? (
             <iframe
                 className="absolute inset-0 h-full w-full"
@@ -127,7 +134,7 @@ function DemoVideo() {
             <button
                 type="button"
                 onClick={() => setIsPlaying(true)}
-                className="group absolute inset-0 flex flex-col items-center justify-center gap-3 text-white"
+                className="group absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/30 text-white transition group-hover:bg-black/40"
             >
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-[#2563EB] transition group-hover:scale-105">
             <Play size={24} fill="currentColor" />
@@ -167,7 +174,7 @@ export default function LandingPage() {
           </div>
         </header>
 
-  
+
         <section className="relative mx-4 mt-2 overflow-hidden rounded-[28px] border border-[#ECEDF1] lg:mx-10">
           <div
               className="absolute inset-0"
