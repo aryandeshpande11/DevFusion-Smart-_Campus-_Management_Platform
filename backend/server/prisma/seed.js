@@ -30,6 +30,21 @@ async function seedRoles() {
     });
   }
   console.log('roles seeded');
+
+
+  const bootstrapEmail = process.env.BOOTSTRAP_ADMIN_EMAIL;
+  if (bootstrapEmail) {
+    const coordinatorRole = await prisma.role.findUnique({ where: { name: 'coordinator' } });
+    const result = await prisma.user.updateMany({
+      where: { email: bootstrapEmail },
+      data: { roleId: coordinatorRole.id },
+    });
+    if (result.count > 0) {
+      console.log(`bootstrap: ${bootstrapEmail} moved onto the coordinator role`);
+    } else {
+      console.log(`bootstrap: no user found with email ${bootstrapEmail}`);
+    }
+  }
 }
 
 seedRoles()
