@@ -7,7 +7,12 @@ const { sanitizeUser } = require('../utils/sanitizeUser');
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  // frontend (vercel.app) and backend (onrender.com) are different domains,
+  // so this is a cross-site request from the browser's point of view —
+  // SameSite=Lax silently drops the cookie in that case. 'none' is required
+  // for cross-site cookies, and browsers only honor it when secure:true,
+  // which is already set above in production.
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
