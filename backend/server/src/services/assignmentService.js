@@ -50,8 +50,8 @@ async function submitAssignment(assignmentId, studentId, { fileBuffer, githubLin
 function uploadSubmissionFile(buffer) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'campus/submissions', resource_type: 'auto' },
-      (error, result) => (error ? reject(error) : resolve(result))
+        { folder: 'campus/submissions', resource_type: 'auto' },
+        (error, result) => (error ? reject(error) : resolve(result))
     );
     stream.end(buffer);
   });
@@ -81,6 +81,42 @@ async function getMySubmissions(studentId) {
   });
 }
 
+// full assignment list for a student's dashboard: every assignment posted to
+// a course matching their department + semester, merged with their own
+// submission if one exists. getMySubmissions alone only returns rows from
+// assignment_submissions, which don't exist until the student submits — so a
+// freshly posted assignment was invisible to students until they'd already
+// "submitted" it, which is the bug behind "posted assignment not reflected".
+async function getAssignmentsForStudent(studentId) {
+  const student = await db.user.findUnique({ where: { id: studentId } });
+  if (!student || !student.departmentId || !student.semester) return [];
+
+  const assignments = await db.assignment.findMany({
+    where: { course: { departmentId: student.departmentId, semester: student.semester } },
+    include: {
+      course: true,
+      submissions: { where: { studentId } },
+    },
+    orderBy: { deadline: 'asc' },
+  });
+
+  return assignments.map((assignment) => {
+    const mySubmission = assignment.submissions[0] || null;
+    return {
+      id: assignment.id,
+      title: assignment.title,
+      description: assignment.description,
+      deadline: assignment.deadline,
+      courseName: assignment.course.name,
+      status: mySubmission ? mySubmission.status : 'not_submitted',
+      isLate: mySubmission?.isLate ?? false,
+      marks: mySubmission?.marks ?? null,
+      feedback: mySubmission?.feedback ?? null,
+      submission: mySubmission,
+    };
+  });
+}
+
 module.exports = {
   createAssignment,
   getAssignmentsForCourse,
@@ -91,4 +127,5 @@ module.exports = {
   getSubmissionsForAssignment,
   reviewSubmission,
   getMySubmissions,
+  getAssignmentsForStudent,
 };

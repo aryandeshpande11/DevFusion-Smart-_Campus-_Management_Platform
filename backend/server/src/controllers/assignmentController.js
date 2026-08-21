@@ -61,6 +61,13 @@ const getMySubmissions = catchAsync(async function handleGetMySubmissions(req, r
   return sendSuccess(res, 200, 'Your submissions fetched', { submissions });
 });
 
+// full assignment list for the student dashboard — every assignment posted
+// to a course matching their department/semester, submitted or not
+const getMyAssignments = catchAsync(async function handleGetMyAssignments(req, res) {
+  const assignments = await assignmentService.getAssignmentsForStudent(req.currentUser.id);
+  return sendSuccess(res, 200, 'Your assignments fetched', { assignments });
+});
+
 module.exports = {
   createAssignment,
   getAssignmentsForCourse,
@@ -71,4 +78,5 @@ module.exports = {
   getSubmissions,
   reviewSubmission,
   getMySubmissions,
+  getMyAssignments,
 };

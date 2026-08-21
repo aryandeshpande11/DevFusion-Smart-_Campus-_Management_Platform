@@ -13,6 +13,9 @@ router.use(requireAuth);
 router.post('/', requireRole(['faculty']), validateBody(createAssignmentSchema), assignmentController.createAssignment);
 router.get('/course/:courseId', assignmentController.getAssignmentsForCourse);
 router.get('/me/submissions', requireRole(['student']), assignmentController.getMySubmissions);
+// merged assigned+submitted list for the student dashboard — must stay above
+// the generic '/:id' route below, or 'mine' gets swallowed as an assignment id
+router.get('/mine', requireRole(['student']), assignmentController.getMyAssignments);
 router.get('/:id', assignmentController.getAssignmentById);
 router.patch('/:id', requireRole(['faculty']), assignmentController.updateAssignment);
 router.delete('/:id', requireRole(['faculty']), assignmentController.deleteAssignment);
@@ -20,10 +23,10 @@ router.delete('/:id', requireRole(['faculty']), assignmentController.deleteAssig
 router.post('/:id/submit', requireRole(['student']), upload.single('file'), assignmentController.submitAssignment);
 router.get('/:id/submissions', requireRole(['faculty']), assignmentController.getSubmissions);
 router.patch(
-  '/submissions/:id/review',
-  requireRole(['faculty']),
-  validateBody(reviewSubmissionSchema),
-  assignmentController.reviewSubmission
+    '/submissions/:id/review',
+    requireRole(['faculty']),
+    validateBody(reviewSubmissionSchema),
+    assignmentController.reviewSubmission
 );
 
 module.exports = router;
