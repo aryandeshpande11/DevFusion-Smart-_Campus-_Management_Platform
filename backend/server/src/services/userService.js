@@ -75,6 +75,22 @@ async function toggleUserActiveStatus(userId, isActive) {
   return db.user.update({ where: { id: userId }, data: { isActive } });
 }
 
+// admin/coordinator fix-up for a user's department + semester — separate from
+// updateOwnProfile so this can be granted via the manageUsers permission
+// without also handing out edit rights over name/bio/etc for other people
+async function updateUserAcademicInfo(userId, { departmentId, semester }) {
+  const safeUpdates = {};
+  if (departmentId !== undefined) safeUpdates.departmentId = departmentId;
+  if (semester !== undefined) safeUpdates.semester = semester;
+
+  const user = await db.user.update({
+    where: { id: userId },
+    data: safeUpdates,
+    include: { role: true, department: true },
+  });
+  return user;
+}
+
 async function deleteUserAccount(userId) {
   await db.user.delete({ where: { id: userId } });
 }
@@ -88,6 +104,7 @@ module.exports = {
   getUserById,
   listRoles,
   changeUserRole,
+  updateUserAcademicInfo,
   toggleUserActiveStatus,
   deleteUserAccount,
 };

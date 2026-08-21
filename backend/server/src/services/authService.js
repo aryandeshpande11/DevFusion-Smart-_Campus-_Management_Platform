@@ -11,7 +11,7 @@ const env = require('../config/env');
 const SALT_ROUNDS = 12;
 
 // creates a new user with hashed password and fires off the verification email
-async function signupNewUser({ name, email, password, role }) {
+async function signupNewUser({ name, email, password, role, departmentId, semester }) {
   const existingUser = await db.user.findUnique({ where: { email } });
   if (existingUser) {
     throw new AppError('An account with this email already exists', 409);
@@ -23,8 +23,23 @@ async function signupNewUser({ name, email, password, role }) {
     throw new AppError('Selected role is not available', 400);
   }
 
+  if (departmentId) {
+    const department = await db.department.findUnique({ where: { id: departmentId } });
+    if (!department) {
+      throw new AppError('Selected department is not available', 400);
+    }
+  }
+
   const newUser = await db.user.create({
-    data: { name, email, passwordHash, roleId: targetRole.id },
+    data: {
+      name,
+      email,
+      passwordHash,
+      roleId: targetRole.id,
+      departmentId: departmentId || null,
+      // semester only makes sense for students — ignore it for other roles even if sent
+      semester: (role || 'student') === 'student' ? semester || null : null,
+    },
   });
 
   // verification email is best-effort: if SMTP isn't reachable/configured the

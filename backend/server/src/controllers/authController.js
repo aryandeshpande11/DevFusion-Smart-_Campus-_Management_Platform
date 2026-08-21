@@ -1,5 +1,6 @@
 // thin layer - just pulls data off req, calls the service, sends the response
 const authService = require('../services/authService');
+const academicService = require('../services/academicService');
 const { sendSuccess } = require('../utils/response');
 const { catchAsync } = require('../middlewares/errorHandler');
 const { sanitizeUser } = require('../utils/sanitizeUser');
@@ -74,6 +75,14 @@ const getCurrentUser = catchAsync(async function handleGetCurrentUser(req, res) 
   return sendSuccess(res, 200, 'Current user fetched', { user: sanitizeUser(req.currentUser) });
 });
 
+// public (pre-login) list of departments for the signup form — name/code only,
+// nothing sensitive, so this deliberately doesn't sit behind requireAuth
+const listSignupDepartments = catchAsync(async function handleListSignupDepartments(req, res) {
+  const departments = await academicService.listDepartments();
+  const publicDepartments = departments.map(({ id, name, code }) => ({ id, name, code }));
+  return sendSuccess(res, 200, 'Departments fetched', { departments: publicDepartments });
+});
+
 module.exports = {
   signup,
   login,
@@ -85,4 +94,5 @@ module.exports = {
   verifyOtp,
   resetPassword,
   getCurrentUser,
+  listSignupDepartments,
 };

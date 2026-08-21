@@ -22,6 +22,7 @@ router.get('/roles/list', requirePermission('manageUsers'), userController.listR
 router.get('/:id', requireRole(['admin', 'faculty', 'coordinator']), userController.getUserById);
 router.patch('/:id/role', requirePermission('manageUsers'), userController.updateUserRole);
 router.patch('/:id/status', requirePermission('manageUsers'), userController.updateUserStatus);
+router.patch('/:id/academic', requirePermission('manageUsers'), userController.updateUserAcademicInfo);
 router.delete('/:id', requirePermission('manageUsers'), userController.deleteUser);
 
 module.exports = router;

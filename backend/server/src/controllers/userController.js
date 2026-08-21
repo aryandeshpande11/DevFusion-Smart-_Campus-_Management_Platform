@@ -47,6 +47,13 @@ const updateUserStatus = catchAsync(async function handleUpdateUserStatus(req, r
   return sendSuccess(res, 200, 'Status updated', { user: updatedUser });
 });
 
+// lets admin/coordinator fix a student's department + semester after the fact —
+// e.g. if they picked the wrong one at signup or it was never set
+const updateUserAcademicInfo = catchAsync(async function handleUpdateUserAcademicInfo(req, res) {
+  const updatedUser = await userService.updateUserAcademicInfo(req.params.id, req.body);
+  return sendSuccess(res, 200, 'Academic info updated', { user: updatedUser });
+});
+
 const deleteUser = catchAsync(async function handleDeleteUser(req, res) {
   await userService.deleteUserAccount(req.params.id);
   return sendSuccess(res, 200, 'User deleted');
@@ -62,5 +69,6 @@ module.exports = {
   listRoles,
   updateUserRole,
   updateUserStatus,
+  updateUserAcademicInfo,
   deleteUser,
 };

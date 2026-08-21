@@ -15,6 +15,9 @@ const {
 
 const router = express.Router();
 
+// public lookup used by the signup form (no auth — the person doesn't have an account yet)
+router.get('/departments', authController.listSignupDepartments);
+
 // email + password flow
 router.post('/signup', authRateLimiter, validateBody(signupSchema), authController.signup);
 router.post('/login', authRateLimiter, validateBody(loginSchema), authController.login);
