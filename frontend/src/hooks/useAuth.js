@@ -21,7 +21,10 @@ export const useAuth = () => {
 
   const signUp = async (formValues) => {
     await signUpWithEmail(formValues);
-    navigate("/verify-email", { state: { email: formValues.email } });
+    // email verification is disabled for this deployment, so skip the "check your
+    // inbox" step entirely — send the person straight to login with their email
+    // prefilled so they just enter the password they picked and log in normally
+    navigate("/login", { state: { email: formValues.email, justSignedUp: true } });
   };
 
   const logOut = async () => {

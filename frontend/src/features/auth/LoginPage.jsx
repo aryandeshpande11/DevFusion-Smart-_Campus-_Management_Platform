@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout.jsx";
 import Button from "../../components/common/Button.jsx";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -7,7 +7,10 @@ import { useAuth } from "../../hooks/useAuth.js";
 // email + password login, with a Google button stubbed for OAuth wiring
 export default function LoginPage() {
     const { logIn } = useAuth();
-    const [formValues, setFormValues] = useState({ email: "", password: "" });
+    const location = useLocation();
+    const prefillEmail = location.state?.email || "";
+    const justSignedUp = Boolean(location.state?.justSignedUp);
+    const [formValues, setFormValues] = useState({ email: prefillEmail, password: "" });
     const [errorMessage, setErrorMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -30,8 +33,17 @@ export default function LoginPage() {
     return (
         <AuthLayout title="Log in" subtitle="Welcome back — pick up right where you left off.">
             <div className="mb-5 rounded-lg border border-border bg-canvas px-3.5 py-2.5 text-xs text-muted">
-                First time here? <span className="font-medium text-ink">Continue with Google</span> is
-                the quickest way in, or create an account with any college email.
+                {justSignedUp ? (
+                    <>
+                        <span className="font-medium text-ink">Account created.</span> Enter your password
+                        to log in.
+                    </>
+                ) : (
+                    <>
+                        First time here? <span className="font-medium text-ink">Continue with Google</span> is
+                        the quickest way in, or create an account with any college email.
+                    </>
+                )}
             </div>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div>
