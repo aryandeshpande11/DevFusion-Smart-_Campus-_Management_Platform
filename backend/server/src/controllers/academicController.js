@@ -1,6 +1,7 @@
 const academicService = require('../services/academicService');
 const { sendSuccess } = require('../utils/response');
 const { catchAsync } = require('../middlewares/errorHandler');
+const AppError = require('../utils/appError');
 
 const createDepartment = catchAsync(async function handleCreateDepartment(req, res) {
   const department = await academicService.createDepartment(req.body);
@@ -28,8 +29,13 @@ const createCourse = catchAsync(async function handleCreateCourse(req, res) {
 });
 
 const listCourses = catchAsync(async function handleListCourses(req, res) {
-  const courses = await academicService.listCourses();
+  const courses = await academicService.listCourses(req.currentUser);
   return sendSuccess(res, 200, 'Courses fetched', { courses });
+});
+
+const listFacultyOptions = catchAsync(async function handleListFacultyOptions(req, res) {
+  const faculty = await academicService.listFacultyOptions();
+  return sendSuccess(res, 200, 'Faculty fetched', { faculty });
 });
 
 const updateCourse = catchAsync(async function handleUpdateCourse(req, res) {
@@ -43,7 +49,16 @@ const deleteCourse = catchAsync(async function handleDeleteCourse(req, res) {
 });
 
 const getStudentsInCourse = catchAsync(async function handleGetStudentsInCourse(req, res) {
-  const students = await academicService.getStudentsInCourse(req.params.id);
+  const { course, students } = await academicService.getStudentsInCourse(req.params.id);
+  if (!course) throw new AppError('Course not found', 404);
+
+  // a faculty account may only see the roster for a course they're assigned to teach —
+  // admins can see any course's roster
+  const isFaculty = req.currentUser?.role?.name === 'faculty';
+  if (isFaculty && course.facultyId !== req.currentUser.id) {
+    throw new AppError("You don't have permission to view this course", 403);
+  }
+
   return sendSuccess(res, 200, 'Students fetched', { students });
 });
 
@@ -54,6 +69,7 @@ module.exports = {
   deleteDepartment,
   createCourse,
   listCourses,
+  listFacultyOptions,
   updateCourse,
   deleteCourse,
   getStudentsInCourse,

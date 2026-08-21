@@ -14,7 +14,12 @@ const getSessionsForCourse = catchAsync(async function handleGetSessionsForCours
 });
 
 const markManually = catchAsync(async function handleMarkManually(req, res) {
-  const record = await attendanceService.markAttendanceManually(req.params.id, req.body.studentId, req.body.status);
+  const record = await attendanceService.markAttendanceManually(
+      req.currentUser.id,
+      req.params.id,
+      req.body.studentId,
+      req.body.status
+  );
   const io = req.app.get('io');
   emitAttendanceUpdate(io, req.params.id, record);
   return sendSuccess(res, 200, 'Attendance marked', { record });

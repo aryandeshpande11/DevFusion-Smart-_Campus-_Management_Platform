@@ -6,6 +6,7 @@ const createSessionSchema = z.object({
   date: z.string(),
   startTime: z.string(),
   endTime: z.string().optional(),
+  notes: z.string().max(2000).optional(),
 });
 
 const markAttendanceSchema = z.object({

@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.get('/', academicController.listCourses);
+router.get('/faculty/options', requireRole(['admin', 'coordinator']), academicController.listFacultyOptions);
 router.post('/', requireRole(['admin', 'coordinator']), academicController.createCourse);
 router.patch('/:id', requireRole(['admin', 'coordinator']), academicController.updateCourse);
 router.delete('/:id', requireRole(['admin', 'coordinator']), academicController.deleteCourse);

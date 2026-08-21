@@ -4,7 +4,14 @@ const db = require('../config/db');
 const AppError = require('../utils/appError');
 
 // faculty starts a class session, gets a fresh qr token students can scan
-async function createAttendanceSession(facultyId, { courseId, date, startTime, endTime }) {
+async function createAttendanceSession(facultyId, { courseId, date, startTime, endTime, notes }) {
+  // a faculty account may only start sessions for a course they're assigned to teach
+  const course = await db.course.findUnique({ where: { id: courseId } });
+  if (!course) throw new AppError('Course not found', 404);
+  if (course.facultyId !== facultyId) {
+    throw new AppError("You're not assigned to teach this course", 403);
+  }
+
   const qrToken = uuidV4();
 
   return db.attendanceSession.create({
@@ -16,6 +23,7 @@ async function createAttendanceSession(facultyId, { courseId, date, startTime, e
       endTime: endTime ? new Date(endTime) : null,
       qrToken,
       status: 'open',
+      notes: notes || null,
     },
   });
 }
@@ -29,9 +37,12 @@ async function getSessionsForCourse(courseId) {
 }
 
 // faculty manually marks a specific student in a session
-async function markAttendanceManually(sessionId, studentId, status) {
-  const session = await db.attendanceSession.findUnique({ where: { id: sessionId } });
+async function markAttendanceManually(facultyId, sessionId, studentId, status) {
+  const session = await db.attendanceSession.findUnique({ where: { id: sessionId }, include: { course: true } });
   if (!session) throw new AppError('Attendance session not found', 404);
+  if (session.course.facultyId !== facultyId) {
+    throw new AppError("You're not assigned to teach this course", 403);
+  }
 
   return db.attendanceRecord.upsert({
     where: { sessionId_studentId: { sessionId, studentId } },
