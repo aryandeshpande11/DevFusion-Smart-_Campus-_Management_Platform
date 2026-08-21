@@ -32,6 +32,11 @@ const getUserById = catchAsync(async function handleGetUserById(req, res) {
   return sendSuccess(res, 200, 'User fetched', { user });
 });
 
+const listRoles = catchAsync(async function handleListRoles(req, res) {
+  const roles = await userService.listRoles();
+  return sendSuccess(res, 200, 'Roles fetched', { roles });
+});
+
 const updateUserRole = catchAsync(async function handleUpdateUserRole(req, res) {
   const updatedUser = await userService.changeUserRole(req.params.id, req.body.roleId);
   return sendSuccess(res, 200, 'Role updated', { user: updatedUser });
@@ -54,6 +59,7 @@ module.exports = {
   uploadMyResume,
   listUsers,
   getUserById,
+  listRoles,
   updateUserRole,
   updateUserStatus,
   deleteUser,

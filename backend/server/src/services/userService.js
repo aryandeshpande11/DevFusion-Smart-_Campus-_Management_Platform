@@ -63,6 +63,10 @@ async function getUserById(userId) {
   return user;
 }
 
+async function listRoles() {
+  return db.role.findMany({ select: { id: true, name: true }, orderBy: { name: 'asc' } });
+}
+
 async function changeUserRole(userId, newRoleId) {
   return db.user.update({ where: { id: userId }, data: { roleId: newRoleId } });
 }
@@ -82,6 +86,7 @@ module.exports = {
   uploadUserResume,
   listAllUsers,
   getUserById,
+  listRoles,
   changeUserRole,
   toggleUserActiveStatus,
   deleteUserAccount,

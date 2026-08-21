@@ -18,6 +18,7 @@ router.post('/me/resume', uploadRateLimiter, upload.single('resume'), userContro
 // admin/faculty management routes — permission-based so any role with
 // manageUsers: true works, regardless of what that role is named
 router.get('/', requirePermission('manageUsers'), userController.listUsers);
+router.get('/roles/list', requirePermission('manageUsers'), userController.listRoles);
 router.get('/:id', requireRole(['admin', 'faculty', 'coordinator']), userController.getUserById);
 router.patch('/:id/role', requirePermission('manageUsers'), userController.updateUserRole);
 router.patch('/:id/status', requirePermission('manageUsers'), userController.updateUserStatus);
