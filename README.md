@@ -2,6 +2,10 @@
 
 **Stack:** React (Vite) · Node.js/Express · PostgreSQL · Docker · Render (backend) + Vercel (frontend)
 
+Deployed link: https://dev-fusion-smart-campus-management.vercel.app/
+
+Youtube demo link: https://youtu.be/nArtVE9WK9s?si=6PwpXy8SditaecIt
+
 ---
 
 ## 1. High-Level Architecture
