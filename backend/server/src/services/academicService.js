@@ -21,10 +21,21 @@ async function createCourse({ name, code, departmentId, semester, facultyId }) {
   return db.course.create({ data: { name, code, departmentId, semester, facultyId: facultyId || null } });
 }
 
-// admin/coordinator sees every course; faculty only see courses they're assigned to teach
+// admin/coordinator sees every course; faculty only see courses they're assigned to teach.
+// studentCount is derived the same way the roster is (department + semester match),
+// since there's no separate enrollment table — this used to be left out entirely,
+// which is why the Classes page always showed "0 students enrolled" no matter what.
 async function listCourses(currentUser) {
   const where = currentUser?.role?.name === 'faculty' ? { facultyId: currentUser.id } : {};
-  return db.course.findMany({ where, include: { department: true, faculty: true }, orderBy: { name: 'asc' } });
+  const courses = await db.course.findMany({ where, include: { department: true, faculty: true }, orderBy: { name: 'asc' } });
+
+  const counts = await Promise.all(
+      courses.map((course) =>
+          db.user.count({ where: { departmentId: course.departmentId, semester: course.semester, role: { name: 'student' } } })
+      )
+  );
+
+  return courses.map((course, index) => ({ ...course, studentCount: counts[index] }));
 }
 
 async function listFacultyOptions() {
