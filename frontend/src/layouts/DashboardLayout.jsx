@@ -24,7 +24,7 @@ export default function DashboardLayout({ role }) {
         // <html> — login/signup/landing are light-only by design and must never
         // inherit it, even when the user turns dark mode on and then logs out
         <div className={isDarkMode ? "dark" : ""}>
-            <div className="flex h-screen overflow-hidden bg-canvas dark:bg-ink">
+            <div className="flex h-screen overflow-hidden bg-canvas text-ink dark:bg-ink dark:text-canvas">
                 {showWelcome && (
                     <WelcomeOverlay
                         name={currentUser?.name?.split(" ")[0]}

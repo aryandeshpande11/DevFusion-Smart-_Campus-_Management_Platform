@@ -10,9 +10,6 @@
   body {
     @apply bg-canvas text-ink font-sans antialiased;
   }
-  .dark body {
-    @apply bg-ink text-canvas;
-  }
   h1,
   h2,
   h3,
