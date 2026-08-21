@@ -1,15 +1,15 @@
 const express = require('express');
 const academicController = require('../controllers/academicController');
 const requireAuth = require('../middlewares/auth');
-const { requireRole } = require('../middlewares/rbac');
+const { requirePermission } = require('../middlewares/rbac');
 
 const router = express.Router();
 
 router.use(requireAuth);
 
 router.get('/', academicController.listDepartments);
-router.post('/', requireRole(['admin', 'coordinator']), academicController.createDepartment);
-router.patch('/:id', requireRole(['admin', 'coordinator']), academicController.updateDepartment);
-router.delete('/:id', requireRole(['admin', 'coordinator']), academicController.deleteDepartment);
+router.post('/', requirePermission('manageDepartments'), academicController.createDepartment);
+router.patch('/:id', requirePermission('manageDepartments'), academicController.updateDepartment);
+router.delete('/:id', requirePermission('manageDepartments'), academicController.deleteDepartment);
 
 module.exports = router;

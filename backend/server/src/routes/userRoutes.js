@@ -1,7 +1,7 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const requireAuth = require('../middlewares/auth');
-const { requireRole } = require('../middlewares/rbac');
+const { requireRole, requirePermission } = require('../middlewares/rbac');
 const upload = require('../middlewares/upload');
 const { uploadRateLimiter } = require('../middlewares/rateLimit');
 
@@ -15,11 +15,12 @@ router.patch('/me', userController.updateMyProfile);
 router.post('/me/avatar', uploadRateLimiter, upload.single('avatar'), userController.uploadMyAvatar);
 router.post('/me/resume', uploadRateLimiter, upload.single('resume'), userController.uploadMyResume);
 
-// admin/faculty management routes
-router.get('/', requireRole(['admin', 'coordinator']), userController.listUsers);
+// admin/faculty management routes — permission-based so any role with
+// manageUsers: true works, regardless of what that role is named
+router.get('/', requirePermission('manageUsers'), userController.listUsers);
 router.get('/:id', requireRole(['admin', 'faculty', 'coordinator']), userController.getUserById);
-router.patch('/:id/role', requireRole(['admin', 'coordinator']), userController.updateUserRole);
-router.patch('/:id/status', requireRole(['admin', 'coordinator']), userController.updateUserStatus);
-router.delete('/:id', requireRole(['admin', 'coordinator']), userController.deleteUser);
+router.patch('/:id/role', requirePermission('manageUsers'), userController.updateUserRole);
+router.patch('/:id/status', requirePermission('manageUsers'), userController.updateUserStatus);
+router.delete('/:id', requirePermission('manageUsers'), userController.deleteUser);
 
 module.exports = router;

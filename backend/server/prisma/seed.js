@@ -5,7 +5,19 @@ const prisma = new PrismaClient();
 const baseRoles = [
   { name: 'student', permissions: { viewOwnAttendance: true, submitAssignments: true, registerForEvents: true } },
   { name: 'faculty', permissions: { manageAttendance: true, manageAssignments: true, viewCourseReports: true } },
-  { name: 'coordinator', permissions: { manageEvents: true, manageClubs: true } },
+  // combined role: coordinator now carries admin's powers too (manageUsers,
+  // manageDepartments, viewAnalytics, exportData) alongside its own
+  {
+    name: 'coordinator',
+    permissions: {
+      manageEvents: true,
+      manageClubs: true,
+      manageUsers: true,
+      manageDepartments: true,
+      viewAnalytics: true,
+      exportData: true,
+    },
+  },
   { name: 'admin', permissions: { manageUsers: true, manageDepartments: true, viewAnalytics: true, exportData: true } },
 ];
 
@@ -21,5 +33,5 @@ async function seedRoles() {
 }
 
 seedRoles()
-  .catch((error) => console.error(error))
-  .finally(() => prisma.$disconnect());
+    .catch((error) => console.error(error))
+    .finally(() => prisma.$disconnect());
