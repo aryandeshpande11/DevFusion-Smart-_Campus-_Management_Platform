@@ -16,13 +16,10 @@ import {
 } from "lucide-react";
 import { Card } from "../../components/common/Card.jsx";
 
-// Swap this for the real video ID once the walkthrough is uploaded —
-// e.g. "dQw4w9WgXcQ" from youtube.com/watch?v=dQw4w9WgXcQ
-const DEMO_VIDEO_ID = "YOUR_YOUTUBE_VIDEO_ID";
 
-// Landing-only mark — the dashboard/sidebar keeps its GraduationCap icon,
-// this is just for the marketing page. A loose cluster of three shapes
-// rather than an even grid, so it reads as its own thing.
+const DEMO_VIDEO_ID = "Ix5duotFxZs";
+
+
 function Logo({ size = 36 }) {
   return (
       <span
@@ -112,8 +109,7 @@ const techStack = [
   "React", "Node.js / Express", "PostgreSQL", "Prisma ORM", "Redis", "Google OAuth 2.0", "Vercel", "Render",
 ];
 
-// click-to-play so the page never eagerly loads a YouTube iframe on visit —
-// keeps first load fast and looks intentional rather than a bolted-on embed
+
 function DemoVideo() {
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -171,8 +167,7 @@ export default function LandingPage() {
           </div>
         </header>
 
-        {/* hero — dotted card background with floating mockup pieces, no big
-          stock photo, closer to the reference than the old dark-overlay hero */}
+  
         <section className="relative mx-4 mt-2 overflow-hidden rounded-[28px] border border-[#ECEDF1] lg:mx-10">
           <div
               className="absolute inset-0"
