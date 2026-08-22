@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Bell, ChevronDown, Inbox, Moon, Sun } from "lucide-react";
+import { Bell, ChevronDown, Inbox, Menu, Moon, Sun } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth.js";
 import { useUiStore } from "../../store/uiStore.js";
 
 const academicTerms = ["2025 – 2026, Odd semester", "2024 – 2025, Even semester"];
 
 // greeting header used across every dashboard — mirrors "Hi, Nirmala" plus
-// the period dropdown and bell/inbox icons from the reference layout
-export default function Topbar({ pageTitle }) {
+// the period dropdown and bell/inbox icons from the reference layout.
+// `onMenuClick` opens the mobile sidebar drawer; the hamburger button only
+// renders below the lg breakpoint since the sidebar is always visible above it.
+export default function Topbar({ pageTitle, onMenuClick = () => {} }) {
   const { currentUser } = useAuth();
   const { isDarkMode, toggleDarkMode } = useUiStore();
   const [isTermMenuOpen, setIsTermMenuOpen] = useState(false);
@@ -16,16 +18,25 @@ export default function Topbar({ pageTitle }) {
   const firstName = currentUser?.name?.split(" ")[0] || "there";
 
   return (
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface px-8 py-5 dark:border-white/10 dark:bg-ink/60">
-        <div>
-          <h1 className="font-display text-xl font-semibold">
-            {pageTitle || (
-                <>
-                  Hi, {firstName} <span className="align-middle">👋</span>
-                </>
-            )}
-          </h1>
-          <p className="text-sm text-muted">Welcome back to AleBaple</p>
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface px-4 py-5 dark:border-white/10 dark:bg-ink/60 sm:px-8">
+        <div className="flex items-center gap-3">
+          <button
+              onClick={onMenuClick}
+              aria-label="Open menu"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted hover:bg-black/5 hover:text-ink dark:hover:bg-white/5 dark:hover:text-canvas lg:hidden"
+          >
+            <Menu size={20} />
+          </button>
+          <div>
+            <h1 className="font-display text-xl font-semibold">
+              {pageTitle || (
+                  <>
+                    Hi, {firstName} <span className="align-middle">👋</span>
+                  </>
+              )}
+            </h1>
+            <p className="text-sm text-muted">Welcome back to AleBaple</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
