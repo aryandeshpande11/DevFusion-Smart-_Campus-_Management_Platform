@@ -17,7 +17,7 @@ import {
 import { Card } from "../../components/common/Card.jsx";
 
 
-const DEMO_VIDEO_ID = "nArtVE9WK9s";
+const DEMO_VIDEO_ID = "FiuSJ-fxjCs";
 
 
 function Logo({ size = 36 }) {
