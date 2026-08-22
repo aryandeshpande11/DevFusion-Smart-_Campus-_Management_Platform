@@ -17,7 +17,7 @@ import {
 import { Card } from "../../components/common/Card.jsx";
 
 
-const DEMO_VIDEO_ID = "FiuSJ-fxjCs";
+const DEMO_VIDEO_SRC = "/demo-video.mp4"; // place your video file at frontend/public/demo-video.mp4
 
 
 function Logo({ size = 36 }) {
@@ -114,27 +114,20 @@ function DemoVideo() {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-      <div
-          className="relative mx-auto aspect-video w-full max-w-3xl overflow-hidden rounded-2xl border border-[#ECEDF1] bg-[#0F1117] bg-cover bg-center shadow-[0_20px_50px_-20px_rgba(23,25,35,0.35)]"
-          style={
-            !isPlaying
-                ? { backgroundImage: `url(https://img.youtube.com/vi/${DEMO_VIDEO_ID}/maxresdefault.jpg)` }
-                : undefined
-          }
-      >
+      <div className="relative mx-auto aspect-video w-full max-w-3xl overflow-hidden rounded-2xl border border-[#ECEDF1] bg-[#0F1117] shadow-[0_20px_50px_-20px_rgba(23,25,35,0.35)]">
         {isPlaying ? (
-            <iframe
+            <video
                 className="absolute inset-0 h-full w-full"
-                src={`https://www.youtube.com/embed/${DEMO_VIDEO_ID}?autoplay=1`}
-                title="AleBaple product walkthrough"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+                src={DEMO_VIDEO_SRC}
+                controls
+                autoPlay
+                playsInline
             />
         ) : (
             <button
                 type="button"
                 onClick={() => setIsPlaying(true)}
-                className="group absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/30 text-white transition group-hover:bg-black/40"
+                className="group absolute inset-0 flex flex-col items-center justify-center gap-3 text-white"
             >
           <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-[#2563EB] transition group-hover:scale-105">
             <Play size={24} fill="currentColor" />
